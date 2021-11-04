@@ -28,9 +28,9 @@ def add():
     return {'payment_request': res.payment_request, 'add_index': res.add_index}
 
 
-@app.route("/invoice/<index>/", methods=['GET'])
-def index():
-    ix = request.args['<index>']
+@app.route("/invoice/<add_index>", methods=['GET'])
+def settled_by_index():
+    ix = request.args['<add_index>']
     for invoice in lnd_rpc.subscribe_invoices():
         print(invoice)
         if invoice.settled and invoice.add_index == ix:
