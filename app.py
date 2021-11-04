@@ -1,17 +1,18 @@
+import os
 import logging
 import lnd_grpc
-from flask import request, Response, Flask
+from flask_cors import CORS, cross_origin
+from flask import request, Flask
 from decouple import config
 # import lnurl
-import os
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
 APP_DIR = os.path.dirname(__file__)
-print(os.path.join(APP_DIR, 'static'))
-print(os.path.exists(os.path.join(APP_DIR, 'static')))
 app = Flask('app', static_folder=os.path.join(APP_DIR, 'static'), static_url_path='/static')
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 lnd_rpc = lnd_grpc.Lightning(
             lnd_dir=config('lnd_dir'),
             macaroon_path=config('macaroon_path'),
@@ -22,6 +23,7 @@ lnd_rpc = lnd_grpc.Lightning(
 
 
 @app.route("/invoice/", methods=['POST'])
+@cross_origin()
 def add():
     request_data = request.get_json()
     value = request_data['amount']
@@ -32,6 +34,7 @@ def add():
 
 
 @app.route("/invoice/<add_index>", methods=['GET'])
+@cross_origin()
 def settled_by_index(add_index):
     for invoice in lnd_rpc.subscribe_invoices():
         print('state:', type(invoice.state))
@@ -42,6 +45,7 @@ def settled_by_index(add_index):
 
 
 @app.route("/", methods=['GET'])
+@cross_origin()
 def home():
     with open(os.path.join(APP_DIR, 'static/qr.html')) as f:
         return f.read()
