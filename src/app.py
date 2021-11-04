@@ -18,12 +18,21 @@ lnd_rpc = lnd_grpc.Lightning(
             grpc_port='10009')
 
 
-@app.route("/invoice/add", methods=['POST'])
+@app.route("/invoice", methods=['POST'])
 def add():
     request_data = request.get_json()
     value = request_data['value']
     value = max(min(int(value), 5000), 100)
     res = lnd_rpc.add_invoice(value=value)
     print(res)
-    return res.payment_request
+    return {'payment_request': res.payment_request, 'add_index': res.add_index}
 
+
+@app.route("/invoice/<index>/", methods=['GET'])
+def index():
+    ix = request.args['<index>']
+    for invoice in lnd_rpc.subscribe_invoices():
+        print(invoice)
+        if invoice.settled and invoice.add_index == ix:
+            return {'settled': int(invoice.settled)}
+    return {'settled': 0}
