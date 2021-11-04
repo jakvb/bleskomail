@@ -21,7 +21,7 @@ lnd_rpc = lnd_grpc.Lightning(
             grpc_port='10009')
 
 
-@app.route("/invoice", methods=['POST'])
+@app.route("/invoice/", methods=['POST'])
 def add():
     request_data = request.get_json()
     value = request_data['value']
