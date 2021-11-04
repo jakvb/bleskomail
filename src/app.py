@@ -3,6 +3,7 @@ import lnd_grpc
 from flask import request, Response, Flask
 from decouple import config
 # import lnurl
+import os
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -41,5 +42,5 @@ def settled_by_index(add_index):
 
 @app.route("/", methods=['GET'])
 def home():
-    with open('qr.html') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'qr.html')) as f:
         return f.read()
