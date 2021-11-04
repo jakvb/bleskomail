@@ -8,8 +8,10 @@ import os
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
-
-app = Flask('app')
+APP_DIR = os.path.dirname(__file__)
+print(os.path.join(APP_DIR, 'static'))
+print(os.path.exists(os.path.join(APP_DIR, 'static')))
+app = Flask('app', static_folder=os.path.join(APP_DIR, 'static'), static_url_path='/static')
 lnd_rpc = lnd_grpc.Lightning(
             lnd_dir=config('lnd_dir'),
             macaroon_path=config('macaroon_path'),
@@ -42,5 +44,5 @@ def settled_by_index(add_index):
 
 @app.route("/", methods=['GET'])
 def home():
-    with open(os.path.join(os.path.dirname(__file__), 'qr.html')) as f:
+    with open(os.path.join(APP_DIR, 'static/qr.html')) as f:
         return f.read()
