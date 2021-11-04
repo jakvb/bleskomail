@@ -32,6 +32,8 @@ def add():
 def settled_by_index(add_index):
     for invoice in lnd_rpc.subscribe_invoices():
         print(invoice)
+        print('state:' + invoice.state)
+        print('index:' + invoice.add_index)
         if invoice.state == 'SETTLED' and invoice.add_index == add_index:
             return {'settled': 1}
     return {'settled': 0}
