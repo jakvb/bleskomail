@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="qrcode.js"></script>
+<style>
+body {
+    padding: 1rem;
+}
+#qrcode {
+    width: 512px;
+    height: 512px;
+    margin: 0 0 1rem;
+}
+#pay {
+    margin: 0 0 1rem;
+}
+</style>
+</head>
+<body>
+<button id="pay">Zaplatiť</button>
+<div id="qrcode"></div>
+<script type="text/javascript">
+var qrcode = new QRCode(document.getElementById("qrcode"), {
+    width : 400,
+    height : 400,
+	correctLevel : QRCode.CorrectLevel.M,
+});
+var payButton = document.getElementById("pay");
+
+var URL = "http://optiplex.local:57920"
+async function create_invoice() {
+    let response = await fetch(`${URL}/invoice/`, {
+        method: 'POST',
+        body: JSON.stringify({amount: 0.12}),
+    });
+    if (response.ok) {
+        return response.json();
+    } else {
+        console.error("HTTP-Error: " + response.status);
+    }
+}
+
+async function get_invoice(index) {
+    let response = await fetch(`${URL}/invoice/${index}`);
+    if (response.ok) {
+        return response.json();
+    } else {
+        console.error("HTTP-Error: " + response.status);
+    }
+}
+
+payButton.addEventListener('click', function(){
+    create_invoice().then(invoice => {
+        if (invoice) {
+            qrcode.makeCode(invoice.payment_request);
+        }
+        get_invoice(invoice.add_index).then(status => {
+            if (status.settled) {
+                payButton.innerText = 'Zaplatené';
+                payButton.disabled = true;
+            }
+        })
+    });
+});
+</script>
+</body>
+</html>

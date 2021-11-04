@@ -37,3 +37,9 @@ def settled_by_index(add_index):
         if invoice.state == 'SETTLED' and invoice.add_index == add_index:
             return {'settled': 1}
     return {'settled': 0}
+
+
+@app.route("/", methods=['GET'])
+def home():
+    with open('qr.html') as f:
+        return f.read()
