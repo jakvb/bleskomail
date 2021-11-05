@@ -38,8 +38,6 @@ def add():
 @cross_origin()
 def settled_by_index(add_index):
     for invoice in lnd_rpc.subscribe_invoices():
-        print('state:', invoice.state)
-        print('index:', invoice.add_index)
         if invoice.state == 1 and invoice.add_index == int(add_index):
             return {'settled': invoice.state}
     return {'settled': 0}
