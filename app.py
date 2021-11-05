@@ -27,6 +27,7 @@ lnd_rpc = lnd_grpc.Lightning(
 def add():
     request_data = request.get_json()
     value = request_data['amount']
+    print(value)
     value = max(min(int(value), 15000), 100)
     res = lnd_rpc.add_invoice(value=value)
     print(res)
