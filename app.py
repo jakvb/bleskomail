@@ -28,7 +28,7 @@ def add():
     request_data = request.get_json()
     value = request_data['amount']
     print(value)
-    value = max(min(int(value), 15000), 100)
+    value = max(min(int(value), 17000), 100)
     res = lnd_rpc.add_invoice(value=value)
     print(res)
     return {'payment_request': res.payment_request, 'add_index': res.add_index}
