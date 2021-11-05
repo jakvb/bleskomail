@@ -27,7 +27,7 @@ lnd_rpc = lnd_grpc.Lightning(
 def add():
     request_data = request.get_json()
     value = request_data['amount']
-    value = max(min(int(value), 5000), 100)
+    value = max(min(int(value), 15000), 100)
     res = lnd_rpc.add_invoice(value=value)
     print(res)
     return {'payment_request': res.payment_request, 'add_index': res.add_index}
@@ -37,8 +37,8 @@ def add():
 @cross_origin()
 def settled_by_index(add_index):
     for invoice in lnd_rpc.subscribe_invoices():
-        print('state:', type(invoice.state))
-        print('index:', type(invoice.add_index))
+        print('state:', invoice.state)
+        print('index:', invoice.add_index)
         if invoice.state == 1 and invoice.add_index == int(add_index):
             return {'settled': invoice.state}
     return {'settled': 0}
